@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.music_server.mapper.UserMapper">
+
+    <sql id="select">user.id as id,user.username as username,user.password as password,user.email as email,user.create_time as create_time,user.modified_time as modified_time,user.avatar as avatar,user.role as role</sql>
+    <select id="getUser" parameterType="user" resultType="user">
+        select <include refid="select"/>
+        from tb_user user
+        <where>
+            <trim>
+                <if test="id != null">and user.id = #{id}</if>
+                <if test="username != null">and user.username = #{username}</if>
+                <if test="password != null">and user.password = #{password}</if>
+                <if test="email != null">and user.email = #{email}</if>
+                <if test="createTime != null">and user.create_time = #{createTime}</if>
+                <if test="modifiedTime != null">and user.modified_time = #{modifiedTime}</if>
+                <if test="avatar != null">and user.avatar = #{avatar}</if>
+                <if test="role != null">and user.role = #{role}</if>
+            </trim>
+        </where>
+    </select>
+    <insert id="addUser" parameterType="user">
+        insert into tb_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null">username,</if>
+            <if test="password != null">password,</if>
+            <if test="email != null">email,</if>
+            <if test="create_time != null">create_time,</if>
+            <if test="modified_time != null">modified_time,</if>
+            <if test="avatar != null">avatar,</if>
+            <if test="role != null">role,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null">#{username},</if>
+            <if test="password != null">#{password},</if>
+            <if test="email != null">#{email},</if>
+            <if test="create_time != null">#{createTime},</if>
+            <if test="modified_time != null">#{modifiedTime},</if>
+            <if test="avatar != null">#{avatar},</if>
+            <if test="role != null">#{role},</if>
+        </trim>
+    </insert>
+    <update id="updateUser" parameterType="user">
+        update tb_user
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="create_time != null">create_time = #{createTime},</if>
+            <if test="modified_time != null">modified_time = #{modifiedTime},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="role != null">role = #{role},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteUser" parameterType="user">
+        delete from tb_user
+        <where>
+            <trim>
+                <if test="id != null">and id = #{id}</if>
+                <if test="username != null">and username = #{username}</if>
+                <if test="password != null">and password = #{password}</if>
+                <if test="email != null">and email = #{email}</if>
+                <if test="create_time != null">and create_time = #{createTime}</if>
+                <if test="modified_time != null">and modified_time = #{modifiedTime}</if>
+                <if test="avatar != null">and avatar = #{avatar}</if>
+                <if test="role != null">and role = #{role}</if>
+            </trim>
+        </where>
+    </delete>
+<!--    select * from tb_user where username=? and password=?-->
+    <select id="login" parameterType="user" resultType="com.lj.music_server.entity.User">
+        select <include refid="select"/>
+        from tb_user user
+        <where>
+            <trim>
+                <if test="username != null">and user.username = #{username}</if>
+                <if test="password != null">and user.password = #{password}</if>
+            </trim>
+        </where>
+    </select>
+
+</mapper>

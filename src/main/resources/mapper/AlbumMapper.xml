@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.music_server.mapper.AlbumMapper">
+    <sql id="select">
+        album.id AS id,
+        album.NAME AS NAME,
+        album.cover AS cover,
+        album.singer_id AS singer_id,
+        album.click_count AS click_count,
+        album.collection_count AS collection_count,
+        album.comment_count AS commnet_count
+    </sql>
+    <sql id="select_detail">
+        album.id AS id,
+        album.NAME AS NAME,
+        album.description AS description,
+        album.cover AS cover,
+        album.create_time AS create_time,
+        album.singer_id AS singer_id,
+        album.modified_time AS modified_time,
+        album.click_count AS click_count,
+        album.collection_count AS collection_count,
+        album.comment_count AS comment_count
+    </sql>
+    <delete id="deleteAlbum" parameterType="albumVO">
+        DELETE FROM tb_album WHERE id = #{id}
+    </delete>
+    <select id="getAlbum" parameterType="com.lj.music_server.vo.AlbumVO" resultType="com.lj.music_server.vo.AlbumVO">
+        select <include refid="select"/>
+        from tb_album album
+        <where>
+            <if test="id != null">
+                and album.id = #{id}
+            </if>
+            <if test="name != null">
+                and album.name = #{name}
+            </if>
+            <if test="cover != null">
+                and album.cover = #{cover}
+            </if>
+            <if test="createTime != null">
+                and album.create_time = #{createTime}
+            </if>
+            <if test="modifiedTime != null">
+                and album.modified_time = #{modifiedTime}
+            </if>
+            <if test="singerId !=null">
+                and album.singer_id = #{singerId}
+            </if>
+
+        </where>
+    </select>
+    <select id="getAlbumById" parameterType="int" resultType="com.lj.music_server.vo.AlbumVO">
+        select <include refid="select"/>
+        from tb_album album
+        where id = #{id}
+    </select>
+    <select id="top" parameterType="int" resultType="com.lj.music_server.vo.AlbumVO">
+        select <include refid="select"/>
+        from tb_album album
+        order by click_count desc
+        limit #{limit}
+    </select>
+    <select id="getAlbumDetail" parameterType="albumVO" resultType="com.lj.music_server.entity.Album">
+        select <include refid="select_detail"/>
+        from tb_album album
+        <where>
+            <if test="id != null">
+                and album.id = #{id}
+            </if>
+            <if test="name != null">
+                and album.name = #{name}
+            </if>
+            <if test="cover != null">
+                and album.cover = #{cover}
+            </if>
+            <if test="singerId !=null">
+                and album.singer_id = #{singerId}
+            </if>
+            <if test="createTimeRange != null">
+                and album.create_time between #{createTimeRange.[0]} and #{createTimeRange.[1]}
+            </if>
+            <if test="modifiedTimeRange != null">
+                and album.modified_time between #{modifiedTimeRange.[0]} and #{modifiedTimeRange.[1]}
+            </if>
+        </where>
+    </select>
+    <insert id="addAlbum" parameterType="com.lj.music_server.vo.AlbumVO">
+        insert into tb_album
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="cover != null">cover,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="modifiedTime != null">modified_time,</if>
+            <if test="clickCount != null">click_count,</if>
+            <if test="description != null">description,</if>
+            <if test="singerId != null">singer_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="cover != null">#{cover},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="modifiedTime != null">#{modifiedTime},</if>
+            <if test="clickCount != null">#{clickCount},</if>
+            <if test="description != null">#{description},</if>
+            <if test="singerId != null">#{singerId},</if>
+        </trim>
+    </insert>
+    <update id="addClickCount" parameterType="int">
+        update tb_album
+        set click_count = click_count + 1
+        where id = #{id}
+    </update>
+    <update id="updateAlbum" parameterType="com.lj.music_server.vo.AlbumVO">
+        update tb_album
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="cover != null">cover = #{cover},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="modifiedTime != null">modified_time = #{modifiedTime},</if>
+            <if test="clickCount != null">click_count = #{clickCount},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="singerId != null">singer_id = #{singerId},</if>
+            <if test="collectionCount != null">collection_count = #{collectionCount},</if>
+            <if test="commentCount != null">comment_count = #{commentCount},</if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.music_server.mapper.PlaylistMapper">
+    <sql id="select">
+        playlist.id AS id,
+        playlist.NAME AS NAME,
+        playlist.cover AS cover,
+        playlist.click_count AS click_count,
+        playlist.comment_count as comment_count,
+        playlist.collection_count as collection_count,
+        playlist.music_count AS music_count,
+        playlist.user_id AS user_id
+    </sql>
+    <sql id="select_detail">
+        playlist.id AS id,
+        playlist.NAME AS NAME,
+        playlist.create_time AS create_time,
+        playlist.modified_time AS modified_time,
+        playlist.click_count AS click_count,
+        playlist.comment_count as comment_count,
+        playlist.collection_count as collection_count,
+        playlist.description AS description,
+        playlist.cover AS cover,
+        playlist.user_id AS user_id,
+        playlist.music_count AS music_count
+    </sql>
+
+    <select id="getPlaylist" parameterType="playlist" resultType="com.lj.music_server.entity.Playlist">
+        select
+        <include refid="select"/>
+        from tb_playlist playlist
+        <where>
+            <trim>
+                <if test="id != null">and playlist.id = #{id}</if>
+                <if test="name != null">and playlist.name = #{name}</if>
+                <if test="createTime != null">and playlist.create_time = #{createTime}</if>
+                <if test="modifiedTime != null">and playlist.modified_time = #{modifiedTime}</if>
+                <if test="clickCount != null">and playlist.click_count = #{clickCount}</if>
+                <if test="description != null">and playlist.description = #{description}</if>
+                <if test="cover != null">and playlist.cover = #{cover}</if>
+                <if test="userId != null">and playlist.user_id = #{userId}</if>
+                <if test="tagId != null">
+                    and playlist.id in (
+                        select playlist_id from tb_playlist_tag_rt where tag_id = #{tagId}
+                    )
+                </if>
+            </trim>
+        </where>
+    </select>
+
+
+    <select id="top" parameterType="int" resultType="com.lj.music_server.entity.Playlist">
+        select
+        <include refid="select"/>
+        from tb_playlist playlist
+        order by click_count desc
+        limit #{limit}
+    </select>
+
+    <insert id="addPlaylist" useGeneratedKeys="true" keyProperty="id" parameterType="playlist">
+        insert into tb_playlist
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="modifiedTime != null">modified_time,</if>
+            <if test="clickCount != null">click_count,</if>
+            <if test="description != null">description,</if>
+            <if test="cover != null">cover,</if>
+            <if test="userId != null">user_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="modifiedTime != null">#{modifiedTime},</if>
+            <if test="clickCount != null">#{clickCount},</if>
+            <if test="description != null">#{description},</if>
+            <if test="cover != null">#{cover},</if>
+            <if test="userId != null">#{userId},</if>
+        </trim>
+    </insert>
+    <insert id="addPlaylistStyle" parameterType="playlistStyle" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_playlist_style
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="content != null">content</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="content != null">#{content}</if>
+        </trim>
+    </insert>
+    <insert id="addPlaylistStyleTag" parameterType="playlistStyleTag" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_playlist_style_tag
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="content != null">content,</if>
+            <if test="playlistStyleId != null">playlist_style_id</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="content != null">#{content},</if>
+            <if test="playlistStyleId != null">#{playlistStyleId}</if>
+        </trim>
+    </insert>
+    <update id="addClickCount">
+        update tb_playlist
+        set click_count = click_count + 1
+        where id = #{id}
+    </update>
+    <select id="getAlbumById" parameterType="int" resultType="album">
+        select
+        <include refid="select"/>
+        from tb_album album
+        where id = #{id}
+    </select>
+    <select id="getPlaylistById" resultType="com.lj.music_server.vo.PlaylistVO">
+        select
+        <include refid="select_detail"/>
+        from tb_playlist playlist
+        where playlist.id = #{id}
+    </select>
+
+    <select id="getPlaylistStyle" resultType="com.lj.music_server.entity.PlaylistStyle">
+        select
+        *
+        from tb_playlist_style playlist_style
+    </select>
+    <select id="getPlaylistStyleTagByPlaylistStyleId" resultType="com.lj.music_server.entity.PlaylistStyleTag">
+        select
+        *
+        from tb_playlist_style_tag playlist_style_tag
+        where playlist_style_tag.playlist_style_id = #{playlistStyleId}
+    </select>
+    <select id="getPlaylistStyleTagByPlaylistId" resultType="com.lj.music_server.entity.PlaylistStyleTag">
+        select
+        *
+        from tb_playlist_style_tag playlist_style_tag join tb_playlist_tag_rt playlist_tag_rt on playlist_style_tag.id = playlist_tag_rt.tag_id
+        where playlist_tag_rt.playlist_id = #{playlistId}
+    </select>
+
+    <update id="updatePlaylist">
+        update tb_playlist playlist
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="cover != null">
+                cover = #{cover},
+            </if>
+            <if test="clickCount != null">
+                click_count = #{clickCount},
+            </if>
+            <if test="commentCount != null">
+                comment_count = #{commentCount},
+            </if>
+            <if test="collectionCount != null">
+                collection_count = #{collectionCount},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="modifiedTime != null">
+                modified_time = #{modifiedTime},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

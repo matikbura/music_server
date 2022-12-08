@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.music_server.mapper.MusicMapper">
+    <sql id="select">
+        music.id AS id,
+        music.NAME AS NAME,
+        music.url AS url,
+        music.duration AS duration,
+        music.duration_second AS duration_second,
+        music.create_time AS create_time,
+        music.modified_time AS modified_time,
+        music.mv_url AS mv_url,
+        music.mv_duration AS mv_duration,
+        music.album_id AS album_id,
+        music.click_count AS click_count,
+        music.comment_count AS comment_count,
+        music.collection_count AS collection_count
+    </sql>
+    <sql id="select_lyric">
+        lyric.lyric as lyric,
+        lyric.tlyric as tlyric,
+        lyric.music_id as music_id
+    </sql>
+    <select id="getMusic" parameterType="musicVO" resultType="com.lj.music_server.entity.Music">
+        select
+        <include refid="select"/>
+        from tb_music music
+        <where>
+            <if test="id != null">
+                and music.id = #{id}
+            </if>
+            <if test="name != null">
+                and music.name = #{name}
+            </if>
+            <if test="singerId!=null">
+                and music.id in (select music_singer.music_id from tb_music_singer music_singer where music_singer.singer_id = #{singerId})
+            </if>
+        </where>
+    </select>
+    <select id="top" parameterType="int" resultType="com.lj.music_server.entity.Music">
+        select
+        <include refid="select"/>
+        from tb_music music
+        order by click_count desc
+        limit #{limit}
+    </select>
+    <select id="getPlaylistMusic" parameterType="musicVO" resultType="com.lj.music_server.entity.Music">
+        select
+        <include refid="select"/>
+        from tb_music music
+        left join tb_playlist_music playlist_music on music.id = playlist_music.music_id
+        where playlist_music.playlist_id = #{playlistId}
+    </select>
+    <select id="getMusicById" parameterType="int" resultType="com.lj.music_server.entity.Music">
+        select
+        <include refid="select"/>
+        from tb_music music
+        where id = #{id}
+    </select>
+    <select id="getLyricByMusicId" parameterType="int" resultType="com.lj.music_server.entity.Lyric">
+        select
+        <include refid="select_lyric"/>
+        from tb_lyric lyric
+        where lyric.music_id = #{musicId}
+    </select>
+
+    <insert id="addMusic" parameterType="musicVO" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_music
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="url != null">url,</if>
+            <if test="duration != null">duration,</if>
+            <if test="durationSecond != null">duration_second,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="modifiedTime != null">modified_time,</if>
+            <if test="mvUrl != null">mv_url,</if>
+            <if test="mvDuration != null">mv_duration,</if>
+            <if test="albumId != null">album_id,</if>
+            <if test="clickCount != null">click_count,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="url != null">#{url},</if>
+            <if test="duration != null">#{duration},</if>
+            <if test="durationSecond != null">#{durationSecond},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="modifiedTime != null">#{modifiedTime},</if>
+            <if test="mvUrl != null">#{mvUrl},</if>
+            <if test="mvDuration != null">#{mvDuration},</if>
+            <if test="albumId != null">#{albumId},</if>
+            <if test="clickCount != null">#{clickCount},</if>
+        </trim>
+    </insert>
+    <insert id="addMusicToPlaylist" parameterType="musicVo">
+        insert into tb_playlist_music
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="playlistId != null">playlist_id,</if>
+            <if test="id != null">music_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="playlistId != null">#{playlistId},</if>
+            <if test="id != null">#{id},</if>
+        </trim>
+    </insert>
+    <insert id="addMusicLyric" parameterType="musicVo">
+        insert into tb_lyric
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">music_id,</if>
+            <if test="lyric.lyric != null">lyric,</if>
+            <if test="lyric.tlyric != null">tlyric,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="lyric.lyric != null">#{lyric.lyric},</if>
+            <if test="lyric.tlyric != null">#{lyric.tlyric},</if>
+        </trim>
+    </insert>
+    <insert id="addMusicSinger" parameterType="musicVo">
+        insert into tb_music_singer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null and singerIdList!=null">
+                music_id,
+                singer_id,
+            </if>
+        </trim>
+
+        <if test="id!=null and singerIdList!=null">
+            <foreach collection="singerIdList" item="singerId" separator=",">
+                <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    #{id},#{singerId},
+                </trim>
+            </foreach>
+        </if>
+
+    </insert>
+    <update id="updateMusic" parameterType="musicVO">
+        update tb_music
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="durationSecond != null">duration_second = #{durationSecond},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="modifiedTime != null">modified_time = #{modifiedTime},</if>
+            <if test="mvUrl != null">mv_url = #{mvUrl},</if>
+            <if test="mvDuration != null">mv_duration = #{mvDuration},</if>
+            <if test="albumId != null">album_id = #{albumId},</if>
+            <if test="clickCount != null">click_count = #{clickCount},</if>
+            <if test="commentCount != null">comment_count = #{commentCount},</if>
+            <if test="collectionCount != null">collect_count = #{collectionCount},</if>
+
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

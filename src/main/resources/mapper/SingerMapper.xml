@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.music_server.mapper.SingerMapper">
+    <sql id="select">
+        singer.id AS id,
+        singer.NAME AS NAME,
+        singer.cover AS cover,
+        singer.click_count AS click_count,
+        singer.comment_count AS comment_count,
+        singer.collection_count AS collection_count,
+        singer.album_count AS album_count,
+        singer.music_count AS music_count
+    </sql>
+    <sql id="select_detail">
+        singer.id AS id,
+        singer.NAME AS NAME,
+        singer.introduction AS introduction,
+        singer.cover AS cover,
+        singer.create_time AS create_time,
+        singer.modified_time AS modified_time,
+        singer.click_count AS click_count,
+        singer.comment_count as comment_count,
+        singer.collection_count as collection_count,
+        singer.singer_type_id AS singer_type_id,
+        singer.singer_language_id AS singer_language_id,
+        singer.album_count AS album_count,
+        singer.music_count AS music_count
+    </sql>
+    <delete id="deleteSinger" parameterType="int">
+        DELETE FROM tb_singer WHERE id = #{id}
+    </delete>
+    <select id="getSinger" parameterType="singer" resultType="com.lj.music_server.entity.Singer">
+        select <include refid="select"/>
+        from tb_singer singer<if test="nameStart!=null">,tcosler c</if>
+        <where>
+            <trim>
+                <if test="id != null">and singer.id = #{id}</if>
+                <if test="name != null">and singer.name = #{name}</if>
+                <if test="introduction != null">and singer.introduction = #{introduction}</if>
+                <if test="cover != null">and singer.cover = #{cover}</if>
+                <if test="createTime != null">and singer.create_time = #{createTime}</if>
+                <if test="modifiedTime != null">and singer.modified_time = #{modifiedTime}</if>
+                <if test="clickCount != null">and singer.click_count = #{clickCount}</if>
+                <if test="singerTypeId != null">and singer.singer_type_id = #{singerTypeId}</if>
+                <if test="singerLanguageId != null">and singer.singer_language_id = #{singerLanguageId}</if>
+                <if test="nameStart != null">and CONV( HEX( LEFT( CONVERT( singer.name
+                    USING gbk ) , 1 ) ) , 16, 10 )
+                    BETWEEN c.cBegin
+                    AND c.cEnd
+                    AND fPY = #{nameStart}
+                </if>
+            </trim>
+        </where>
+        <if test="sortField != null">
+            order by singer.${sortField} desc
+        </if>
+    </select>
+    <select id="getSingerDetailById" parameterType="singer" resultType="com.lj.music_server.entity.Singer">
+        select <include refid="select_detail"/>
+        from tb_singer singer
+        where singer.id = #{id}
+    </select>
+    <select id="top" parameterType="int" resultType="com.lj.music_server.entity.Singer">
+        select <include refid="select"/>
+        from tb_singer singer
+        order by click_count desc
+        limit #{limit}
+    </select>
+    <insert id="addSinger" parameterType="singer">
+        insert into tb_singer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="introduction != null">introduction,</if>
+            <if test="cover != null">cover,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="modifiedTime != null">modified_time,</if>
+            <if test="singerLanguageId != null">singer_language_id,</if>
+            <if test="singerTypeId != null">singer_type_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="introduction != null">#{introduction},</if>
+            <if test="cover != null">#{cover},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="modifiedTime != null">#{modifiedTime},</if>
+            <if test="singerLanguageId != null">#{singerLanguageId},</if>
+            <if test="singerTypeId != null">#{singerTypeId},</if>
+        </trim>
+    </insert>
+    <update id="addClickCount">
+        update tb_singer
+        set click_count = click_count + 1
+        where id = #{id}
+    </update>
+    <update id="updateSinger" parameterType="singerVO">
+        update tb_singer
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="introduction != null">introduction = #{introduction},</if>
+            <if test="cover != null">cover = #{cover},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="modifiedTime != null">modified_time = #{modifiedTime},</if>
+            <if test="singerLanguageId != null">singer_language_id = #{singerLanguageId},</if>
+            <if test="singerTypeId != null">singer_type_id = #{singerTypeId},</if>
+            <if test="clickCount != null">click_count = #{clickCount},</if>
+            <if test="commentCount != null">comment_count = #{commentCount},</if>
+            <if test="collectionCount != null">collection_count = #{collectionCount},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="getSingerByMusicId" parameterType="int" resultType="com.lj.music_server.entity.Singer">
+        select <include refid="select"/>
+        from tb_singer singer
+        inner join tb_music_singer ms on singer.id = ms.singer_id
+        where ms.music_id = #{musicId}
+    </select>
+    <select id="getSingerDetail" parameterType="SingerVO" resultType="com.lj.music_server.entity.Singer">
+        select <include refid="select_detail"/>
+        from tb_singer singer
+        <where>
+            <trim>
+                <if test="id != null">and singer.id = #{id}</if>
+                <if test="name != null">and singer.name = #{name}</if>
+                <if test="introduction != null">and singer.introduction = #{introduction}</if>
+                <if test="cover != null">and singer.cover = #{cover}</if>
+                <if test="createTime != null">and singer.create_time = #{createTime}</if>
+                <if test="modifiedTime != null">and singer.modified_time = #{modifiedTime}</if>
+                <if test="clickCount != null">and singer.click_count = #{clickCount}</if>
+                <if test="createTimeRange != null">and singer.create_time between #{createTimeRange.[0]} and #{createTimeRange.[1]}</if>
+                <if test="modifiedTimeRange != null">and singer.modified_time between #{modifiedTimeRange.[0]} and #{modifiedTimeRange.[1]}</if>
+            </trim>
+        </where>
+    </select>
+    <select id="getSingerById" resultType="com.lj.music_server.entity.Singer">
+        select <include refid="select_detail"/>
+        from tb_singer singer
+        where singer.id = #{id}
+    </select>
+    <select id="getSingerTypeById" parameterType="int" resultType="com.lj.music_server.entity.SingerType">
+        select *
+        from tb_singer_type singer_type
+        where singer_type.id = #{id}
+    </select>
+    <select id="getSingerType" resultType="com.lj.music_server.entity.SingerType">
+        select *
+        from tb_singer_type singer_type
+    </select>
+    <select id="getSingerLanguage"  resultType="com.lj.music_server.entity.SingerLanguage">
+        select *
+        from tb_singer_language singer_language
+    </select>
+    <select id="getSingerLanguageById" parameterType="int" resultType="com.lj.music_server.entity.SingerLanguage">
+        select *
+        from tb_singer_language singer_language
+        where singer_language.id = #{id}
+    </select>
+</mapper>
