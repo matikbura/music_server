@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lj.music_server.mapper.UserMapper">
 
-    <sql id="select">user.id as id,user.username as username,user.password as password,user.email as email,user.create_time as create_time,user.modified_time as modified_time,user.avatar as avatar,user.role as role</sql>
+    <sql id="select">user.id as id,user.username as username,user.password as password,user.email as email,user.create_time as create_time,user.modified_time as modified_time,user.avatar as avatar,user.role as role,user.nickname as nickname </sql>
     <select id="getUser" parameterType="user" resultType="user">
         select <include refid="select"/>
         from tb_user user
@@ -78,6 +78,11 @@
                 <if test="password != null">and user.password = #{password}</if>
             </trim>
         </where>
+    </select>
+    <select id="getUserById" resultType="com.lj.music_server.entity.User">
+        select <include refid="select"/>
+        from tb_user user
+        where user.id = #{id}
     </select>
 
 </mapper>

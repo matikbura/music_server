@@ -48,6 +48,12 @@ public class UserController {
         login.setToken(token);
         return new Result<>(true, HttpStatusEnum.OK, login);
     }
+    @NotAuthorization
+    @RequestMapping("getUserById")
+    public Result<Object> getUserById(Integer userId) {
+        UserVO userById = userService.getUserById(userId);
+        return new Result<>(true, HttpStatusEnum.OK, userById);
+    }
 
     @NotAuthorization
     @RequestMapping("register")

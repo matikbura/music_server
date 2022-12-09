@@ -1,6 +1,7 @@
 package com.lj.music_server.service.impl;
 
 import com.lj.music_server.entity.Album;
+import com.lj.music_server.entity.Playlist;
 import com.lj.music_server.entity.Singer;
 import com.lj.music_server.enums.TypeEnum;
 import com.lj.music_server.mapper.*;
@@ -42,9 +43,9 @@ public class MyCollectionServiceImpl implements IMyCollectionService {
             AlbumVO albumVO = ParseUtils.po_parse_vo(album, AlbumVO.class);
             albumMapper.updateAlbum(albumVO);
         }else if (myCollectionVO.getType()==TypeEnum.PLAYLIST.getTypeNum()){
-            PlaylistVO playlistVO = playlistMapper.getPlaylistById(myCollectionVO.getTypeId());
-            playlistVO.setCollectionCount(playlistVO.getCollectionCount() + 1);
-            playlistMapper.updatePlaylist(playlistVO);
+            Playlist playlist = playlistMapper.getPlaylistById(myCollectionVO.getTypeId());
+            playlist.setCollectionCount(playlist.getCollectionCount() + 1);
+            playlistMapper.updatePlaylist(playlist);
         }else if (myCollectionVO.getType()==TypeEnum.SINGER.getTypeNum()){
             Singer singer = singerMapper.getSingerById(myCollectionVO.getTypeId());
             singer.setCollectionCount(singer.getCollectionCount() + 1);
@@ -62,7 +63,7 @@ public class MyCollectionServiceImpl implements IMyCollectionService {
             AlbumVO albumVO = ParseUtils.po_parse_vo(albumById, AlbumVO.class);
             albumMapper.updateAlbum(albumVO);
         }else if(myCollectionVO.getType()== TypeEnum.PLAYLIST.getTypeNum()){
-            PlaylistVO playlistById = playlistMapper.getPlaylistById(myCollectionVO.getTypeId());
+            Playlist playlistById = playlistMapper.getPlaylistById(myCollectionVO.getTypeId());
             playlistById.setCollectionCount(playlistById.getCollectionCount()-1);
             playlistMapper.updatePlaylist(playlistById);
         } else if (myCollectionVO.getType()== TypeEnum.SINGER.getTypeNum()) {

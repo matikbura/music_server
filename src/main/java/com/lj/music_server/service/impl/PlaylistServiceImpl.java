@@ -60,12 +60,20 @@ public class PlaylistServiceImpl implements IPlaylistService {
     }
 
     @Override
-    public PlaylistVO getPlaylistById(Integer id) {
-        PlaylistVO playlist = playlistMapper.getPlaylistById(id);
+    public PlaylistVO getPlaylistById(Integer id, Integer userId) {
+        Playlist playlist = playlistMapper.getPlaylistById(id);
+        PlaylistVO playlistVO = ParseUtils.po_parse_vo(playlist, PlaylistVO.class);
         //获取歌单标签
         ArrayList<PlaylistStyleTag> playlistStyleTags = playlistMapper.getPlaylistStyleTagByPlaylistId(id);
-        playlist.setTags(playlistStyleTags);
-        return playlist;
+        playlistVO.setTags(playlistStyleTags);
+        if (userId != null) {
+            MyCollection collection= new MyCollection();
+            collection.setType(2);
+            collection.setUserId(userId);
+            collection.setTypeId(id);
+            playlistVO.setIsCollected(myCollectionMapper.getMyCollection(collection).size() > 0);
+        }
+        return playlistVO;
     }
 
     @Override

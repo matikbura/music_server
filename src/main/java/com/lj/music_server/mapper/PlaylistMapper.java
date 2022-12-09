@@ -19,7 +19,7 @@ public interface PlaylistMapper {
 
     void updatePlaylist(Playlist playlist);
 
-    PlaylistVO getPlaylistById(Integer id);
+    Playlist getPlaylistById(Integer id);
 
     ArrayList<PlaylistStyle> getPlaylistStyle();
 

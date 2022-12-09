@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.music_server.mapper.CommentMapper">
+    <select id="getComment" parameterType="commentVO" resultType="com.lj.music_server.entity.Comment">
+        select * from tb_comment
+        <where>
+            <trim>
+                <if test="type != null">and type = #{type}</if>
+                <if test="typeId != null">and type_id = #{typeId}</if>
+            </trim>
+        </where>
+        <if test="sortField!=null">
+            order by ${sortField} desc
+        </if>
+    </select>
+    <select id="getCommentById" parameterType="int" resultType="com.lj.music_server.entity.Comment">
+        select * from tb_comment
+        <where>
+            <if test="id != null">and id = #{id}</if>
+        </where>
+    </select>
+</mapper>

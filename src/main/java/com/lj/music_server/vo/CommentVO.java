@@ -15,4 +15,6 @@ public class CommentVO extends Comment {
     private User targetUser;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Comment targetComment;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String sortField;
 }

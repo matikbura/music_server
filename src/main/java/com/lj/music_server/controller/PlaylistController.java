@@ -41,8 +41,8 @@ public class PlaylistController {
     }
     @NotAuthorization
     @RequestMapping("getPlaylistById")
-    public Result<Object> getPlaylistById(Integer id) {
-        PlaylistVO playlist = playlistService.getPlaylistById(id);
+    public Result<Object> getPlaylistById(Integer id,Integer userId) {
+        PlaylistVO playlist = playlistService.getPlaylistById(id,userId);
         return new Result<>(true, HttpStatusEnum.OK, playlist);
     }
 

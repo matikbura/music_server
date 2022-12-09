@@ -109,7 +109,7 @@
         from tb_album album
         where id = #{id}
     </select>
-    <select id="getPlaylistById" resultType="com.lj.music_server.vo.PlaylistVO">
+    <select id="getPlaylistById" resultType="com.lj.music_server.entity.Playlist">
         select
         <include refid="select_detail"/>
         from tb_playlist playlist

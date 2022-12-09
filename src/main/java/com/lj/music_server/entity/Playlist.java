@@ -28,7 +28,7 @@ public class Playlist {
     private String modifiedTime;
     //歌单创建者id
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String userId;
+    private Integer userId;
     //点击量
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer clickCount;

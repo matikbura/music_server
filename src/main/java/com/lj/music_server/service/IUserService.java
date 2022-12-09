@@ -6,4 +6,6 @@ import org.springframework.stereotype.Service;
 
 public interface IUserService {
     UserVO login(UserVO userVO);
+
+    UserVO getUserById(Integer userId);
 }

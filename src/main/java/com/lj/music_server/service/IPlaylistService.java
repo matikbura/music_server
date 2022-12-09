@@ -1,9 +1,7 @@
 package com.lj.music_server.service;
 
-import com.lj.music_server.entity.Playlist;
 import com.lj.music_server.entity.PlaylistStyle;
 import com.lj.music_server.entity.PlaylistStyleTag;
-import com.lj.music_server.vo.MusicVO;
 import com.lj.music_server.vo.Page;
 import com.lj.music_server.vo.PlaylistStyleVo;
 import com.lj.music_server.vo.PlaylistVO;
@@ -20,7 +18,7 @@ public interface IPlaylistService {
     void updatePlaylist(PlaylistVO playlist);
 
 
-    PlaylistVO getPlaylistById(Integer id);
+    PlaylistVO getPlaylistById(Integer id, Integer userId);
 
     ArrayList<PlaylistStyleVo> getPlaylistStyle();
 

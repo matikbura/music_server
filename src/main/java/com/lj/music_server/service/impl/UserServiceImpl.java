@@ -22,4 +22,9 @@ public class UserServiceImpl implements IUserService {
         }
         return userVO1;
     }
+
+    @Override
+    public UserVO getUserById(Integer userId) {
+        return ParseUtils.po_parse_vo(userMapper.getUserById(userId), UserVO.class);
+    }
 }

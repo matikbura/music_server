@@ -6,6 +6,7 @@ import com.lj.music_server.entity.MyCollection;
 import com.lj.music_server.entity.Singer;
 import com.lj.music_server.entity.SingerLanguage;
 import com.lj.music_server.entity.SingerType;
+import com.lj.music_server.enums.TypeEnum;
 import com.lj.music_server.mapper.MyCollectionMapper;
 import com.lj.music_server.mapper.SingerMapper;
 import com.lj.music_server.service.ISingerService;
@@ -123,7 +124,7 @@ public class SingerServiceImp implements ISingerService {
             MyCollection myCollection = new MyCollection();
             myCollection.setUserId(loginId);
             myCollection.setTypeId(id);
-            myCollection.setType(3);
+            myCollection.setType(TypeEnum.SINGER.getTypeNum());
             singerVO.setIsCollected(myCollectionMapper.getMyCollection(myCollection).size() > 0);
         }
         return singerVO;
