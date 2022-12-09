@@ -8,6 +8,7 @@ import com.lj.music_server.entity.PlaylistStyle;
 import com.lj.music_server.entity.PlaylistStyleTag;
 import com.lj.music_server.mapper.MyCollectionMapper;
 import com.lj.music_server.mapper.PlaylistMapper;
+import com.lj.music_server.mapper.UserMapper;
 import com.lj.music_server.service.IPlaylistService;
 import com.lj.music_server.utils.ParseUtils;
 import com.lj.music_server.vo.Page;
@@ -23,10 +24,11 @@ public class PlaylistServiceImpl implements IPlaylistService {
     final
     PlaylistMapper playlistMapper;
     final MyCollectionMapper myCollectionMapper;
-
-    public PlaylistServiceImpl(PlaylistMapper playlistMapper, MyCollectionMapper myCollectionMapper) {
+    final UserMapper userMapper;
+    public PlaylistServiceImpl(PlaylistMapper playlistMapper, MyCollectionMapper myCollectionMapper, UserMapper userMapper) {
         this.playlistMapper = playlistMapper;
         this.myCollectionMapper = myCollectionMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -73,6 +75,7 @@ public class PlaylistServiceImpl implements IPlaylistService {
             collection.setTypeId(id);
             playlistVO.setIsCollected(myCollectionMapper.getMyCollection(collection).size() > 0);
         }
+        playlistVO.setUser(userMapper.getUserById(playlistVO.getUserId()));
         return playlistVO;
     }
 
@@ -103,6 +106,10 @@ public class PlaylistServiceImpl implements IPlaylistService {
         PageInfo<Playlist> pageInfo = new PageInfo<>(playlist);
         ArrayList<PlaylistVO> playlistVOS = ParseUtils.po_parse_vo(pageInfo.getList(), PlaylistVO.class);
         MyCollection collection = null;
+        //获取用户信息
+        for (PlaylistVO playlistVO : playlistVOS) {
+            playlistVO.setUser(userMapper.getUserById(playlistVO.getUserId()));
+        }
         if(page.getCondition().getLoginId()!=null){
             for (PlaylistVO playlistVO : playlistVOS) {
                 collection= new MyCollection();
@@ -115,8 +122,5 @@ public class PlaylistServiceImpl implements IPlaylistService {
         page.setTotal(pageInfo.getTotal());
         page.setData(playlistVOS);
         page.setHasNext(pageInfo.isHasNextPage());
-
     }
-
-
 }

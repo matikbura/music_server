@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lj.music_server.mapper.CommentMapper">
+    <insert id="addComment">
+        insert into tb_comment ( user_id,type,type_id,target_id,target_comment_id, content, create_time)
+        values (#{userId},#{type},#{typeId},#{targetId},#{targetCommentId},#{content},#{createTime})
+    </insert>
     <select id="getComment" parameterType="commentVO" resultType="com.lj.music_server.entity.Comment">
         select * from tb_comment
         <where>

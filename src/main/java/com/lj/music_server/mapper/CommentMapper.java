@@ -11,4 +11,6 @@ public interface CommentMapper {
     ArrayList<Comment> getComment(CommentVO condition);
 
     Comment getCommentById(Integer targetCommentId);
+
+    void addComment(CommentVO commentVO);
 }

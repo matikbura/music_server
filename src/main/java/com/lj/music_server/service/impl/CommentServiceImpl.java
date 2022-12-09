@@ -40,4 +40,9 @@ public class CommentServiceImpl implements ICommentService {
         page.setData(commentVOS);
         page.setTotal(pageInfo.getTotal());
     }
+
+    @Override
+    public void addComment(CommentVO commentVO) {
+        commentMapper.addComment(commentVO);
+    }
 }

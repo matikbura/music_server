@@ -25,4 +25,12 @@ public class CommentController {
         commentService.getCommentConditionPage(page);
         return new Result<>(true, HttpStatusEnum.OK, page);
     }
+    @RequestMapping("addComment")
+    public Result<Object> addComment(@RequestBody CommentVO commentVO) {
+        if (commentVO.getType()==null||commentVO.getTypeId()==null||commentVO.getUserId()==null||commentVO.getContent()==null) {
+            return new Result<>(false, HttpStatusEnum.BAD_REQUEST,"参数错误");
+        }
+        commentService.addComment(commentVO);
+        return new Result<>(true, HttpStatusEnum.OK, commentVO);
+    }
 }

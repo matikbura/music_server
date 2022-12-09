@@ -5,4 +5,6 @@ import com.lj.music_server.vo.Page;
 
 public interface ICommentService {
     void getCommentConditionPage(Page<CommentVO> page);
+
+    void addComment(CommentVO commentVO);
 }
